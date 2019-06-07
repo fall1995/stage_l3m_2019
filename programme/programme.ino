@@ -36,20 +36,20 @@ void loop()
 void startUp ()
 {
   Serial.println("in startUp");
-  digitalWrite(STBY,HIGH);
+  digitalWrite(STBY,LOW);
 }
 
 void shutDown ()
 {
   Serial.println("in shutDown");
-  digitalWrite(STBY,LOW);
+  digitalWrite(STBY,HIGH);
 }
 
 void goForward (int pwm)
 {
   Serial.println("in goForward");
-  digitalWrite (AIN1,HIGH);
-  digitalWrite (AIN2,LOW);
+  digitalWrite (AIN1,LOW);
+  digitalWrite (AIN2,HIGH);
   analogWrite(PWMA,pwm);
     
 }
@@ -57,8 +57,8 @@ void goForward (int pwm)
 void goBackward (int pwm)
 {
   Serial.println("in goBackward");
-  digitalWrite (AIN1,LOW);
-  digitalWrite (AIN2,HIGH);
+  digitalWrite (AIN1,HIGH);
+  digitalWrite (AIN2,LOW);
   analogWrite(PWMA,pwm);
      
 }
