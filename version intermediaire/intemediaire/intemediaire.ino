@@ -5,13 +5,14 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
+/* cablage des broches de la carte de puissance TB6612FNG vers la carte arduino */
 #define PWMA D7
 #define AIN1 D1
 #define AIN2 D0
 #define STBY D3
 #ifndef APSSID
-#define APSSID "ESPap"
-#define APPSK  "thereisnospoon"
+#define APSSID "iPhone de Aly"
+#define APPSK  "af123456789"
 #endif
 
 /* Set these to your desired credentials. */
@@ -20,23 +21,22 @@ const char *password = APPSK;
 
 ESP8266WebServer server(80);
 
-/* Just a little test message.  Go to http://192.168.4.1 in a web browser
-   connected to this access point to see it.
-*/
-
-void setup() {
-  delay(1000);
-  Serial.begin(115200);
-  Serial.println();
-  Serial.print("Configuring access point...");
-  /* You can remove the password parameter if you want the AP to be open. */
+void setup()
+{
+  /*
   WiFi.softAP(ssid, password);
 
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  
-  Serial.println("HTTP server started");
+  */
+  /* definition des broches de la carte de puissance en tant que sortie */
+  pinMode(PWMA, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(STBY, OUTPUT);
+  // Ouvre la voie série avec l'ordinateur
+  Serial.begin(115200);
   server.on("/", handleRoot);
   server.on("/startUp", startUp);
   server.on("/shutDown", shutDown);
@@ -44,26 +44,94 @@ void setup() {
   server.on("/goBackward", goBackward);
   server.on("/accelerer", accelerer);
   server.on("/ralentir", ralentir);
+  //server.begin();
+  //  Connect to Wi-Fi network with SSID and password
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+/*
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(3000);
+    Serial.print(".");
+  }
+  */
+  // Print local IP address and start web server
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
   server.begin();
 }
 
-void loop() {
+
+void loop()
+{
   server.handleClient();
+  /*
+    Serial.println("Debut");
+    delay(5000);
+    digitalWrite(STBY, HIGH);
+    Serial.println("STBY");
+    delay(5000);
+    analogWrite(PWMA, 500); //0-1023
+    Serial.println("PWMA");
+    delay(5000);
+
+    digitalWrite (AIN1, LOW);
+    digitalWrite (AIN2, HIGH);
+    Serial.println("Sens 1");
+    delay(5000);
+
+    digitalWrite(STBY, LOW);
+    Serial.println("STBY LOW");
+    delay(5000);
+
+    digitalWrite (AIN1, HIGH);
+    digitalWrite (AIN2, LOW);
+    digitalWrite(STBY, HIGH);
+    Serial.println("Sens 2");
+    delay(5000);
+
+    analogWrite(PWMA, 750); //0-1023
+    Serial.println("PWMA");
+    delay(5000);
+
+    analogWrite(PWMA, 1000); //0-1023
+    Serial.println("PWMA");
+    delay(5000);
+
+    digitalWrite(STBY, LOW);
+    Serial.println("STBY LOW");
+    delay(5000);
+  */
+
+
 }
+
 void handleRoot() {
   server.send(200, "text/html", MAIN_page);
 }
 
+
+
 void startUp ()
+{
+  if (digitalRead(STBY) == LOW)
 {
   server.send(200, "text/html", "<h1> ON</h1>");
   Serial.println("Debut");
 
   digitalWrite(STBY, HIGH);
-  Serial.println("STBY");
+  Serial.println("STBY HIGH");
   delay(1000);
+  digitalWrite (AIN1, LOW);
+  digitalWrite (AIN2, LOW);
   //ce code est juste pour un test
-
+} else{
+  digitalWrite(STBY, HIGH);
+  Serial.println("STBY HIGH");
+  delay(1000);
+}
 
 }
 
@@ -72,6 +140,8 @@ void shutDown ()
   server.send(200, "text/html", "<h1>off</h1>");
   digitalWrite(STBY, LOW);
   Serial.println("STBY LOW");
+  digitalWrite (AIN1, LOW);
+  digitalWrite (AIN2, LOW);
   delay(1000);
 }
 
@@ -93,7 +163,7 @@ void accelerer ()
 {
   if (digitalRead(STBY) == HIGH)
 {
-  analogWrite(PWMA, 1000); //0-1023
+  analogWrite(PWMA, 2000); //0-1023
   Serial.println("PWMA");
   delay(1000);
  }
@@ -116,7 +186,6 @@ void goBackward ()
 {
   analogWrite(PWMA, 500); //0-1023
   Serial.println("PWMA");
-  delay(1000);
   digitalWrite (AIN1, LOW);
   digitalWrite (AIN2, HIGH);
   Serial.println("marche arriere");
