@@ -37,7 +37,7 @@ void setup()
   Serial.print("AP IP address: ");
   Serial.println(myIP);
   */
-  /* definition des broches de la carte de puissance en tant que sortie */
+  // definition des broches de la carte de puissance en tant que sortie 
   pinMode(PWMA, OUTPUT);
   pinMode(AIN1, OUTPUT);
   pinMode(AIN2, OUTPUT);
@@ -56,26 +56,28 @@ void setup()
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-  //--------------
-  WiFi.mode(WIFI_AP);
+  
+  /*WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
   WiFi.softAP("Moteur");
   dnsServer.setTTL(300);
   dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
   // start DNS server for a specific domain name
-  dnsServer.start(DNS_PORT, "www.Aly.com", apIP);
+  dnsServer.start(DNS_PORT, "www.mote.com", apIP);
+  */
   
-/*
+
   while (WiFi.status() != WL_CONNECTED) {
-    delay(3000);
+    delay(500);
     Serial.print(".");
   }
-  */
-  // Print local IP address and start web server
+  
+  // on affiche l'adresse IP qui nous a ete attribuee
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  //--------------
   
   server.begin();
 }
@@ -85,45 +87,7 @@ void loop()
 {
   dnsServer.processNextRequest();
   server.handleClient();
-  /*
-    Serial.println("Debut");
-    delay(5000);
-    digitalWrite(STBY, HIGH);
-    Serial.println("STBY");
-    delay(5000);
-    analogWrite(PWMA, 500); //0-1023
-    Serial.println("PWMA");
-    delay(5000);
-
-    digitalWrite (AIN1, LOW);
-    digitalWrite (AIN2, HIGH);
-    Serial.println("Sens 1");
-    delay(5000);
-
-    digitalWrite(STBY, LOW);
-    Serial.println("STBY LOW");
-    delay(5000);
-
-    digitalWrite (AIN1, HIGH);
-    digitalWrite (AIN2, LOW);
-    digitalWrite(STBY, HIGH);
-    Serial.println("Sens 2");
-    delay(5000);
-
-    analogWrite(PWMA, 750); //0-1023
-    Serial.println("PWMA");
-    delay(5000);
-
-    analogWrite(PWMA, 1000); //0-1023
-    Serial.println("PWMA");
-    delay(5000);
-
-    digitalWrite(STBY, LOW);
-    Serial.println("STBY LOW");
-    delay(5000);
-  */
-
-
+  
 }
 
 void handleRoot() {
